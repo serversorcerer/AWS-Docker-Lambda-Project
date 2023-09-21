@@ -66,7 +66,7 @@ To replace the placeholders in the commands, here is how you find the real value
 
 📬 Contact
 
-For any queries or further assistance, feel free to reach out at youremail@example.com.
+For any queries or further assistance, feel free to reach out at serversorcerer@gmail.com.
 
 📜 License
 
