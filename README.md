@@ -1,73 +1,79 @@
-# **Simple AWS Lambda Python Deployment Using Docker**
+# AWS Lambda Python Function Deployment with Docker
 
-This guide will aid you in deploying a Python function to AWS Lambda using Docker, all under a Python 3.9 environment. Just follow the easy steps outlined below to have your function running in no time.
+A guide to developing and deploying a Python function to AWS Lambda using a Docker container.
 
-## **📝 Table of Contents**
+## Table of Contents
+
 - [Project Overview](#project-overview)
-- [Requirements](#requirements)
+- [Prerequisites](#prerequisites)
 - [Setup and Deployment](#setup-and-deployment)
-- [Finding Your Details](#finding-your-details)
+  - [Create a Docker Image](#create-a-docker-image)
+  - [Tag and Push Docker Image](#tag-and-push-docker-image)
+  - [Deploy AWS Lambda Function](#deploy-aws-lambda-function)
+- [Troubleshooting](#troubleshooting)
 - [Contact](#contact)
 - [License](#license)
 
-### **🌟 Project Overview**
+## Project Overview
 
-Setting up a Python function to run on AWS Lambda through a Docker container couldn't be simpler. This setup utilizes a Python 3.9 image from a public ECR repository.
+This repository provides a guide on how to package and deploy a Python function to AWS Lambda using a Docker container.
 
-### **🛠 Requirements**
-- Docker software (M1 Mac chip users are covered)
-- AWS CLI with necessary permissions
-- A ready AWS ECR repository
+## Prerequisites
 
-### **🚀 Setup and Deployment**
+Ensure that you have the following set up before starting:
 
-#### **Step 1: Docker Image Preparation**
-   
-Prepare your Dockerfile as shown below:
+- Docker installed on your system
+- AWS CLI configured with the necessary permissions
+- An AWS ECR repository created
 
-```dockerfile
-FROM public.ecr.aws/lambda/python:3.9
-COPY app.py ./
-CMD ["app.lambda_handler"]
+## Setup and Deployment
 
-Next, build your Docker image with:
+Here are the step-by-step instructions to set up and deploy your function:
 
-docker buildx create --use
-docker buildx build --platform linux/arm64 -t my_python_app:1.0 .
+### Create a Docker Image
 
-Step 2: Tagging and Pushing the Docker Image
+1. Prepare your `Dockerfile` using the script below:
 
-Identify your Docker image ID using:
+    ```dockerfile
+    FROM public.ecr.aws/lambda/python:3.9
+    COPY app.py ./
+    CMD ["app.lambda_handler"]
+    ```
 
-docker images
+2. Open your terminal and build the Docker image using the following command (replace `your_image_name` and `your_image_tag` with your details):
 
-Tag and push your image to the AWS ECR:
+    ```bash
+    docker build -t your_image_name:your_image_tag .
+    ```
 
-docker tag your_image_id:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/my_ecr_repo:1.0
-docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/my_ecr_repo:1.0
+### Tag and Push Docker Image
 
-Step 3: AWS Lambda Function Deployment
+3. Tag and push your Docker image to your AWS ECR repository using the commands below (replace placeholders with your details):
 
-Deploy your function using AWS CLI:
+    ```bash
+    docker tag your_image_name:your_image_tag your_account_id.dkr.ecr.your_region.amazonaws.com/your_repository_name:your_image_tag
+    docker push your_account_id.dkr.ecr.your_region.amazonaws.com/your_repository_name:your_image_tag
+    ```
 
-aws lambda create-function --function-name my_lambda_function --role arn:aws:iam::123456789012:role/execution_role --code image-uri=123456789012.dkr.ecr.us-east-1.amazonaws.com/my_ecr_repo:1.0 --package-type Image
+### Deploy AWS Lambda Function
 
-🔎 Finding Your Details
+4. Deploy your function to AWS Lambda using the following command (replace placeholders with your details):
 
-To replace the placeholders in the commands, here is how you find the real values:
+    ```bash
+    aws lambda create-function --function-name your_function_name --role your_role_arn --code image-uri=your_account_id.dkr.ecr.your_region.amazonaws.com/your_repository_name:your_image_tag --package-type Image
+    ```
 
-	•	app.py and app.lambda_handler: Use your Python filename and the function within it that you wish to run.
-	•	my_python_app and 1.0: Decide on a name and a tag for your Docker image.
-	•	123456789012, us-east-1, my_ecr_repo: Find these in your AWS console; they represent your AWS account ID, region, and the name of your ECR repository.
-	•	your_image_id: Use the docker images command to find this ID.
-	•	my_lambda_function and arn:aws:iam::123456789012:role/execution_role: Name your AWS Lambda function and find your role ARN in the AWS IAM console.
+## Troubleshooting
 
-🔒 Safety Note: Always keep your AWS IAM role ARN and AWS account ID confidential to maintain your project’s security.
+In case you run into issues, here are some possible solutions:
 
-📬 Contact
+- **JSON Payload Error:** Ensure your JSON payload is correctly formatted. Use online tools to validate the format.
+- **Docker Image Compatibility:** If using an M1 Mac, ensure that the Docker image is compatible with AWS Lambda by setting the correct architecture during the Docker build process.
 
-For any queries or further assistance, feel free to reach out at serversorcerer@gmail.com.
+## Contact
 
-📜 License
+If you have questions or run into issues, feel free to reach out at [serversorcerer@gmail.com](mailto:serversorcerer@gmail.com).
 
-This project is licensed under the terms of the MIT license. Check the LICENSE file in the repository for more details.
+## License
+
+This project is licensed under the MIT license. For more details, refer to the LICENSE file in this repository.
